@@ -1,0 +1,10 @@
+<nav *ngIf="authService.isLoggedIn()" style="background: #333; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+  <span>
+    <strong>Clínica</strong> | Usuario: {{ authService.getUser()?.username }} ({{ authService.getRole() }})
+  </span>
+  <button (click)="salir()" style="background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">
+    Cerrar Sesión
+  </button>
+</nav>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,50 @@
+<div class="container" style="padding: 20px; font-family: Arial, sans-serif;">
+  
+  <div *ngIf="authService.getRole() === 'admin'" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+    <h2>{{ editando ? 'Modificar Paciente' : 'Registrar Nuevo Paciente' }}</h2>
+    <form (submit)="guardar($event)">
+      <input name="dni" [value]="pacienteSeleccionado?.dni || ''" placeholder="DNI" [readonly]="editando" required style="margin: 5px;">
+      <input name="nombre" [value]="pacienteSeleccionado?.nombre || ''" placeholder="Nombre" required style="margin: 5px;">
+      <input name="apellido" [value]="pacienteSeleccionado?.apellido || ''" placeholder="Apellido" required style="margin: 5px;">
+      <input name="fechaNacimiento" [value]="pacienteSeleccionado?.fecha_nacimiento || ''" type="date" required style="margin: 5px;">
+      <input name="telefono" [value]="pacienteSeleccionado?.telefono || ''" placeholder="Teléfono" style="margin: 5px;">
+      <input name="email" [value]="pacienteSeleccionado?.email || ''" type="email" placeholder="Email" style="margin: 5px;">
+      
+      <button type="submit" [style.background]="editando ? '#007bff' : '#28a745'" style="color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">
+        {{ editando ? 'Actualizar Datos' : 'Guardar Paciente' }}
+      </button>
+      <button type="button" *ngIf="editando" (click)="cancelarEdicion()" style="margin-left: 10px; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+        Cancelar
+      </button>
+    </form>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label><strong>Buscar por DNI:</strong> </label>
+    <input type="text" (input)="buscarPorDni($event)" placeholder="Escribí un DNI..." style="padding: 8px; width: 250px; border-radius: 4px; border: 1px solid #ccc;">
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #333; color: white;">
+        <th style="padding: 10px;">DNI</th>
+        <th style="padding: 10px;">Nombre</th>
+        <th style="padding: 10px;">Apellido</th>
+        <th style="padding: 10px;">Teléfono</th>
+        <th style="padding: 10px;" *ngIf="authService.getRole() === 'admin'">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of pacientesFiltrados" style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 10px;">{{ p.dni }}</td>
+        <td style="padding: 10px;">{{ p.nombre }}</td>
+        <td style="padding: 10px;">{{ p.apellido }}</td>
+        <td style="padding: 10px;">{{ p.telefono }}</td>
+        <td style="padding: 10px;" *ngIf="authService.getRole() === 'admin'">
+          <button (click)="prepararEdicion(p)" style="background: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Editar</button>
+          <button (click)="borrar(p.dni)" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

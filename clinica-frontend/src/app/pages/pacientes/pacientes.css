@@ -1,0 +1,20 @@
+/* Centrar los títulos de la tabla */
+th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px;
+}
+
+/* Centrar el contenido de las celdas */
+td {
+  text-align: center; 
+  vertical-align: middle;
+  padding: 10px;
+}
+
+/* Si querés que las acciones (botones) tengan un poquito más de aire */
+.acciones-cell {
+  display: flex;
+  justify-content: center;
+  gap: 8px; /* Espacio entre Editar y Eliminar */
+}
