@@ -1,20 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PacientesComponent } from './pacientes';
+import { HttpClientTestingModule } from '@angular/common/http/testing'; // Necesario para que no falle el servicio
+import { FormsModule } from '@angular/forms';
 
-import { Pacientes } from './pacientes';
-
-describe('Pacientes', () => {
-  let component: Pacientes;
-  let fixture: ComponentFixture<Pacientes>;
+describe('PacientesComponent', () => {
+  let component: PacientesComponent;
+  let fixture: ComponentFixture<PacientesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Pacientes]
+      // Como es Standalone, va en imports. Agregué los módulos de HTTP y Form para que no tire error.
+      imports: [PacientesComponent, HttpClientTestingModule, FormsModule]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Pacientes);
+    fixture = TestBed.createComponent(PacientesComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

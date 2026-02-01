@@ -47,9 +47,7 @@ export class AuthService {
   }
 
   logout() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('user');
-    }
-    this.router.navigate(['/login']);
-  }
+  localStorage.removeItem('user'); // O como sea que guardes el token/usuario
+  this.router.navigate(['/login']);
+}
 }

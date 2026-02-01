@@ -1,5 +1,12 @@
 <div class="container" style="padding: 20px; font-family: Arial, sans-serif;">
   
+  <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+    <button (click)="onLogout()" 
+        style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: 500;">
+  Cerrar Sesión
+</button>
+  </div>
+
   <div *ngIf="authService.getRole() === 'admin'" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
     <h2>{{ editando ? 'Modificar Paciente' : 'Registrar Nuevo Paciente' }}</h2>
     <form (submit)="guardar($event)">
@@ -31,20 +38,51 @@
         <th style="padding: 10px;">Nombre</th>
         <th style="padding: 10px;">Apellido</th>
         <th style="padding: 10px;">Teléfono</th>
-        <th style="padding: 10px;" *ngIf="authService.getRole() === 'admin'">Acciones</th>
+        <th style="padding: 10px;">Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let p of pacientesFiltrados" style="border-bottom: 1px solid #ddd;">
+      <tr *ngFor="let p of pacientesFiltrados" style="border-bottom: 1px solid #ddd;" [style.background]="pacienteParaNotas?.dni === p.dni ? '#f0f7ff' : 'transparent'">
         <td style="padding: 10px;">{{ p.dni }}</td>
         <td style="padding: 10px;">{{ p.nombre }}</td>
         <td style="padding: 10px;">{{ p.apellido }}</td>
         <td style="padding: 10px;">{{ p.telefono }}</td>
-        <td style="padding: 10px;" *ngIf="authService.getRole() === 'admin'">
-          <button (click)="prepararEdicion(p)" style="background: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Editar</button>
-          <button (click)="borrar(p.dni)" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+        <td style="padding: 10px;">
+          <button (click)="seleccionarPacienteParaNotas(p)" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Notas</button>
+          
+          <ng-container *ngIf="authService.getRole() === 'admin'">
+            <button (click)="prepararEdicion(p)" style="background: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Editar</button>
+            <button (click)="borrar(p.dni)" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+          </ng-container>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="pacienteParaNotas" style="margin-top: 30px; border-top: 2px solid #ddd; padding-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3>Notas de visita: {{ pacienteParaNotas.nombre }} {{ pacienteParaNotas.apellido }}</h3>
+        <button (click)="pacienteParaNotas = null" style="background: #eee; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Cerrar Notas</button>
+    </div>
+    
+    <div *ngIf="authService.getRole() === 'admin'" style="background: #f1f1f1; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <textarea [(ngModel)]="nuevaNotaTexto" placeholder="Escribí el resumen de la consulta..." style="width: 100%; height: 70px; padding: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box;"></textarea>
+      <button (click)="guardarNota()" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+        Guardar Nota
+      </button>
+    </div>
+
+    <div style="max-height: 400px; overflow-y: auto; background: #fafafa; padding: 10px; border-radius: 8px;">
+      <div *ngFor="let nota of listaNotas" style="background: white; border: 1px solid #eee; padding: 12px; margin-bottom: 10px; border-radius: 6px; border-left: 5px solid #17a2b8;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <small style="color: #888;">{{ nota.fecha | date:'dd/MM/yyyy HH:mm' }}</small>
+          <button *ngIf="authService.getRole() === 'admin'" (click)="borrarNota(nota.id)" style="color: #dc3545; background: none; border: none; cursor: pointer; font-size: 11px;">Eliminar</button>
+        </div>
+        <p style="margin: 8px 0 0 0; color: #333; line-height: 1.4;">{{ nota.texto }}</p>
+      </div>
+      
+      <p *ngIf="listaNotas.length === 0" style="text-align: center; color: #999; padding: 20px;">No hay notas registradas para este paciente.</p>
+    </div>
+  </div>
+
 </div>

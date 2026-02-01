@@ -1,0 +1,58 @@
+.login-wrapper {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  
+  /* Fondo con mini puntos */
+  background-color: #f0f2f5;
+  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 20px 20px; /* Esto controla la separación de los puntos */
+}
+
+/* La tarjeta blanca */
+.login-card {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 850px;
+  height: 500px; /* Le damos un poquito más de aire */
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+  align-items: stretch; /* Estira las dos mitades por igual */
+}
+
+/* Lado del Logo (Izquierda) */
+.login-side-logo {
+  flex: 1;
+  background-color: #e8f0fe;
+  display: flex !important;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente el círculo */
+  padding: 20px;
+}
+
+/* El círculo perfecto */
+.login-side-logo img {
+  width: 220px; 
+  height: 220px; 
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Lado del Formulario (Derecha) */
+.login-side-form {
+  flex: 1.2;
+  padding: 50px;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center; /* Centra el formulario verticalmente */
+}

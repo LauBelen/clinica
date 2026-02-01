@@ -9,7 +9,9 @@ export class PacientesService {
 
   constructor(private http: HttpClient) { }
 
-  //Obtener todos los pacientes     
+  /**
+   * Obtener todos los pacientes
+   */
   getPacientes(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl, { withCredentials: true });
   }
@@ -34,5 +36,24 @@ export class PacientesService {
    */
   deletePaciente(dni: string | number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${dni}`, { withCredentials: true });
+  } 
+
+  // --- MÉTODOS PARA NOTAS MÉDICAS ---
+
+  getNotas(dni: string | number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${dni}/notas`, { withCredentials: true });
+  }
+
+  // Modificamos este para que sea más claro y no falle
+  createNota(pacienteDni: string, contenido: string): Observable<any> {
+    const data = {
+      paciente_dni: pacienteDni,
+      texto: contenido
+    };
+    return this.http.post(`${this.apiUrl}/notas`, data, { withCredentials: true });
+  }
+
+  deleteNota(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/notas/${id}`, { withCredentials: true });
   }
 }
