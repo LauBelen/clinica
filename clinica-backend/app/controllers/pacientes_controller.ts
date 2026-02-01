@@ -13,28 +13,50 @@ export default class PacientesController {
   }
 
   async store({ request, response }: HttpContext) {
-    const data = request.only(['dni', 'nombre', 'apellido', 'fechaNacimiento', 'telefono', 'email'])
-    const paciente = await Paciente.create({
-      dni: data.dni,
-      nombre: data.nombre,
-      apellido: data.apellido,
-      fechaNacimiento: DateTime.fromISO(data.fechaNacimiento),
-      telefono: data.telefono,
-      email: data.email,
-    })
-    return response.created(paciente)
+    try {
+      const data = request.only(['dni', 'nombre', 'apellido', 'fechaNacimiento', 'telefono', 'email'])
+      const paciente = await Paciente.create({
+        dni: data.dni,
+        nombre: data.nombre,
+        apellido: data.apellido,
+        fechaNacimiento: DateTime.fromISO(data.fechaNacimiento),
+        telefono: data.telefono,
+        email: data.email,
+      })
+      return response.created(paciente)
+    } catch (error) {
+      return response.badRequest({ message: 'Error al crear paciente', error: error.message })
+    }
   }
 
   async update({ params, request, response }: HttpContext) {
-    const paciente = await Paciente.findBy('dni', params.dni)
-    if (!paciente) return response.notFound({ message: 'Paciente no encontrado' })
-    
-    const data = request.only(['nombre', 'apellido', 'fechaNacimiento', 'telefono', 'email'])
-    if (data.fechaNacimiento) data.fechaNacimiento = DateTime.fromISO(data.fechaNacimiento)
+    try {
+      const paciente = await Paciente.findBy('dni', params.dni)
+      if (!paciente) return response.notFound({ message: 'Paciente no encontrado' })
+      
+      const data = request.only(['nombre', 'apellido', 'fechaNacimiento', 'telefono', 'email'])
 
-    paciente.merge(data)
-    await paciente.save()
-    return response.ok(paciente)
+      // Actualizamos campos básicos
+      paciente.nombre = data.nombre
+      paciente.apellido = data.apellido
+      paciente.telefono = data.telefono
+      paciente.email = data.email
+
+      // Manejo seguro de la fecha:
+      // Solo la actualizamos si viene un valor y es una fecha válida
+      if (data.fechaNacimiento) {
+        const nuevaFecha = DateTime.fromISO(data.fechaNacimiento)
+        if (nuevaFecha.isValid) {
+          paciente.fechaNacimiento = nuevaFecha
+        }
+      }
+
+      await paciente.save()
+      return response.ok(paciente)
+    } catch (error) {
+      console.error('Error en Update:', error)
+      return response.internalServerError({ message: 'No se pudo actualizar el paciente' })
+    }
   }
 
   async destroy({ params, response }: HttpContext) {
@@ -48,11 +70,10 @@ export default class PacientesController {
 
   async getNotas({ params, response }: HttpContext) {
     try {
-      // Buscamos las notas usando el DNI que viene en la URL
       const notas = await db
         .from('notas')
         .where('paciente_dni', params.dni)
-        .orderBy('id', 'desc') // Ordenar por ID es más seguro que por fecha
+        .orderBy('id', 'desc')
 
       return response.ok(notas)
     } catch (error) {
@@ -69,7 +90,6 @@ export default class PacientesController {
         return response.badRequest({ message: 'Faltan datos (DNI o texto)' })
       }
 
-      // Insertamos asegurando que el DNI se trate como String
       await db.table('notas').insert({
         paciente_dni: String(data.paciente_dni),
         texto: data.texto
